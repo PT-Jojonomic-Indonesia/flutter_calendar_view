@@ -27,9 +27,9 @@ class EventLabels extends StatelessWidget {
       DateTime date, List<CalendarEvent> events) {
     final res = events
         .where((event) =>
-    event.eventDate.year == date.year &&
-        event.eventDate.month == date.month &&
-        event.eventDate.day == date.day)
+            event.eventDate.year == date.year &&
+            event.eventDate.month == date.month &&
+            event.eventDate.day == date.day)
         .toList();
     return res;
   }
@@ -57,34 +57,24 @@ class EventLabels extends StatelessWidget {
         }
         final eventsOnTheDay = _eventsOnTheDay(date, events);
         final hasEnoughSpace =
-        _hasEnoughSpace(cellHeight, eventsOnTheDay.length);
+            _hasEnoughSpace(cellHeight, eventsOnTheDay.length);
         final maxIndex = _maxIndex(cellHeight, eventsOnTheDay.length);
-        return ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: eventsOnTheDay.length,
-          itemBuilder: (context, index) {
-            if (hasEnoughSpace) {
-              return _EventLabel(eventsOnTheDay[index]);
-            } else if (index < maxIndex) {
-              return _EventLabel(eventsOnTheDay[index]);
-            } else if (index == maxIndex) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _EventLabel(
-                    eventsOnTheDay[index],
-                  ),
-                  Icon(
-                    Icons.more_horiz,
-                    size: 13,
-                  )
-                ],
-              );
-            } else {
-              return SizedBox.shrink();
-            }
-          },
+        return Column(
+          children: [
+            for (int i = 0; i < eventsOnTheDay.length; i++)
+              if (hasEnoughSpace)
+                _EventLabel(eventsOnTheDay[i])
+              else if (i < maxIndex)
+                _EventLabel(eventsOnTheDay[i])
+              else if (i == maxIndex)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _EventLabel(eventsOnTheDay[i]),
+                    Icon(Icons.more_horiz, size: 13)
+                  ],
+                ),
+          ],
         );
       },
       selector: (context, controller) => controller.events,
